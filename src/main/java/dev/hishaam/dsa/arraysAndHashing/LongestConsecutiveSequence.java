@@ -26,18 +26,34 @@ import java.util.stream.Collectors;
  * <p>NOTE: Sorting would give O(n log n), this HashSet approach achieves true O(n)
  */
 class LongestConsecutiveSequence {
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // HashSet with Sequence Start Detection - O(n) time, O(n) space
+  // ═══════════════════════════════════════════════════════════════════════════
+  //
+  // EXAMPLE WALKTHROUGH with [100, 4, 200, 1, 3, 2]:
+  // Set = {100, 4, 200, 1, 3, 2}
+  // num=100: 99 not in set → START! Count: 100 (len=1)
+  // num=4: 3 IS in set → SKIP (not a start)
+  // num=200: 199 not in set → START! Count: 200 (len=1)
+  // num=1: 0 not in set → START! Count: 1,2,3,4 (len=4) ✓
+  // num=3: 2 IS in set → SKIP
+  // num=2: 1 IS in set → SKIP
+  // Final: 4
   public int longestConsecutive(int[] nums) {
     int ans = 0;
-    // KEY: Convert to Set for O(1) lookup and automatic duplicate removal
     Set<Integer> numsSet = Arrays.stream(nums).boxed().collect(Collectors.toSet());
+
     for (Integer num : numsSet) {
-      // TRICK: Only count sequences starting from their FIRST element
-      // If (num - 1) exists, this number is part of a sequence we'll count elsewhere
+      // ─────────────────────────────────────────────────────────────────────
+      // SEQUENCE START CHECK: Only count from numbers with NO predecessor
+      // WHY? Avoids recounting - sequences starting mid-way are handled by their
+      // start
+      // ─────────────────────────────────────────────────────────────────────
       if (!numsSet.contains(num - 1)) {
-        // This is a sequence START - no predecessor exists
         int localConsecutive = 1;
         int counter = 1;
-        // Count consecutive numbers forward from this start point
+        // Count forward from this start point
         while (numsSet.contains(num + counter)) {
           localConsecutive++;
           counter++;

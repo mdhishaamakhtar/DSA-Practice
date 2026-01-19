@@ -20,38 +20,54 @@ import java.util.List;
  */
 class EncodeDecodeString {
 
+  // ═══════════════════════════════════════════════════════════════════════════
+  // Length-Prefixed Encoding - O(n) time, O(n) space
+  // ═══════════════════════════════════════════════════════════════════════════
+  //
+  // FORMAT: [length]#[string] for each string
+  // EXAMPLE: ["Hello","World"] → "5#Hello5#World"
+  // This handles ALL edge cases including strings with '#' or digits!
   public String encode(List<String> strs) {
     StringBuilder ans = new StringBuilder();
     for (String str : strs) {
-      // TRICK: Use length prefix + separator so we know exactly where string ends
-      // Format: "5#Hello" means read next 5 chars after '#'
       char separator = '#';
       ans.append(str.length()).append(separator).append(str);
     }
     return ans.toString();
   }
 
+  // ═══════════════════════════════════════════════════════════════════════════
+  // Decode by parsing length prefix
+  // ═══════════════════════════════════════════════════════════════════════════
+  //
+  // EXAMPLE WALKTHROUGH with "5#Hello5#World":
+  // i=0: read "5", j=1, skip '#', read chars 2-6 = "Hello", i=7
+  // i=7: read "5", j=8, skip '#', read chars 9-13 = "World", i=14
+  // Final: ["Hello", "World"]
   public List<String> decode(String str) {
     List<String> ans = new ArrayList<>();
     int i = 0;
+
     while (i < str.length()) {
-      // IMPORTANT: Build the length by reading all consecutive digits
+      // ─────────────────────────────────────────────────────────────────────
+      // PARSE LENGTH: Read all consecutive digits
+      // ─────────────────────────────────────────────────────────────────────
       StringBuilder length = new StringBuilder();
-      // KEY: Start with "0" to handle edge case of empty string (length = 0)
-      length.append("0");
+      length.append("0"); // Handle edge case of empty string (length = 0)
       int j = i;
-      // REMEMBER: Length can be multiple digits (e.g., "100#" for a 100-char string)
       while (j < str.length() && Character.isDigit(str.charAt(j))) {
         length.append(str.charAt(j));
         j++;
       }
       int wordLength = Integer.parseInt(length.toString());
-      // KEY: j is now at '#', so actual string starts at j + 1
+
+      // ─────────────────────────────────────────────────────────────────────
+      // EXTRACT STRING: j is at '#', read next wordLength chars
+      // ─────────────────────────────────────────────────────────────────────
       int k = j + 1;
       String word = str.substring(k, k + wordLength);
       ans.add(word);
-      // IMPORTANT: Move i to start of next encoded segment
-      i = k + wordLength;
+      i = k + wordLength; // Move to next encoded segment
     }
     return ans;
   }

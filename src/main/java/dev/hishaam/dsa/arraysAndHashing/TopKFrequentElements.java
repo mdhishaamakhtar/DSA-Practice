@@ -22,32 +22,38 @@ import java.util.stream.Collectors;
  * <p>Time Complexity: O(n log n) due to sorting Space Complexity: O(n) for frequency map
  */
 public class TopKFrequentElements {
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // HashMap + Sorting by Frequency - O(n log n) time, O(n) space
+  // ═══════════════════════════════════════════════════════════════════════════
   public int[] topKFrequent(int[] nums, int k) {
-    // Step 1: Build frequency map
+    // ─────────────────────────────────────────────────────────────────────
+    // STEP 1: Build frequency map
+    // ─────────────────────────────────────────────────────────────────────
     Map<Integer, Integer> freq = new HashMap<>();
     for (int num : nums) {
       freq.put(num, freq.getOrDefault(num, 0) + 1);
     }
-    // Step 2: Sort by frequency (descending) using Stream API
-    // KEY: Use LinkedHashMap to preserve insertion order after sorting
+
+    // ─────────────────────────────────────────────────────────────────────
+    // STEP 2: Sort by frequency (descending) using Stream API
+    // TRICK: LinkedHashMap preserves insertion order after sorting
+    // ─────────────────────────────────────────────────────────────────────
     LinkedHashMap<Integer, Integer> freqSorted =
         freq.entrySet().stream()
-            // IMPORTANT: reverseOrder() for descending - highest frequency first
             .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
             .collect(
                 Collectors.toMap(
-                    Map.Entry::getKey, // Key mapper
-                    Map.Entry::getValue, // Value mapper
-                    (a, b) -> a, // Merge function (not used, no duplicates)
-                    LinkedHashMap::new)); // TRICK: LinkedHashMap maintains insertion order!
+                    Map.Entry::getKey, Map.Entry::getValue, (a, b) -> a, LinkedHashMap::new));
 
-    // Step 3: Extract first k keys from the sorted map
+    // ─────────────────────────────────────────────────────────────────────
+    // STEP 3: Extract first k keys from sorted map
+    // ─────────────────────────────────────────────────────────────────────
     int counter = 0;
     int[] ans = new int[k];
     for (Map.Entry<Integer, Integer> entry : freqSorted.entrySet()) {
       if (counter < k) {
-        // NOTE: We want the KEY (the number), not the VALUE (frequency)
-        ans[counter] = entry.getKey();
+        ans[counter] = entry.getKey(); // Want the KEY (number), not VALUE (frequency)
         counter++;
       }
     }

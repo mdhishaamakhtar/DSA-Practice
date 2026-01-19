@@ -24,8 +24,20 @@ import java.util.Set;
  * number of sets and elements
  */
 class ValidSudoku {
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // Three HashSets per Row/Column/Box - O(1) time (fixed 9x9), O(1) space
+  // ═══════════════════════════════════════════════════════════════════════════
+  //
+  // BOX KEY FORMULA EXPLAINED:
+  // For cell (i,j), box index = (i/3)*3 + (j/3)
+  // Example: (4,7) → (4/3)*3 + (7/3) = 1*3 + 2 = 5 (middle-right box)
+  //
+  // Box layout:
+  // 0 | 1 | 2
+  // 3 | 4 | 5
+  // 6 | 7 | 8
   public boolean isValidSudoku(char[][] board) {
-    // Create 9 sets each for rows, columns, and 3x3 boxes
     List<Set<Character>> row = new ArrayList<>();
     List<Set<Character>> column = new ArrayList<>();
     List<Set<Character>> box = new ArrayList<>();
@@ -38,23 +50,22 @@ class ValidSudoku {
 
     for (int i = 0; i < 9; i++) {
       for (int j = 0; j < 9; j++) {
-
-        // Skip empty cells (represented as '.')
         if (!Character.isDigit(board[i][j])) {
           continue;
         }
-        // KEY FORMULA: Convert 2D position to box index (0-8)
-        // (i/3) gives box row (0,1,2), (j/3) gives box col (0,1,2)
-        // (i/3)*3 + (j/3) maps to: 0,1,2 | 3,4,5 | 6,7,8
+
+        // ─────────────────────────────────────────────────────────────────────
+        // BOX INDEX: (i/3)*3 + (j/3) maps 9x9 grid to 9 boxes (0-8)
+        // ─────────────────────────────────────────────────────────────────────
         int boxKey = (i / 3) * 3 + (j / 3);
 
-        // TRICK: Set.add() returns FALSE if element already exists!
-        // This is a one-liner duplicate check - add and verify in one operation
+        // ─────────────────────────────────────────────────────────────────────
+        // TRICK: Set.add() returns FALSE if element already exists
+        // ─────────────────────────────────────────────────────────────────────
         boolean isRowPresent = row.get(i).add(board[i][j]);
         boolean isColumnPresent = column.get(j).add(board[i][j]);
         boolean isBoxPresent = box.get(boxKey).add(board[i][j]);
 
-        // If any add() returned false, we found a duplicate
         if (!isRowPresent || !isColumnPresent || !isBoxPresent) {
           return false;
         }

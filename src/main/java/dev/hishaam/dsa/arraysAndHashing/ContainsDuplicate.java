@@ -21,16 +21,26 @@ import java.util.Map;
  * pass, returning immediately upon finding a duplicate.
  */
 public class ContainsDuplicate {
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // HashMap Frequency Count - O(n) time, O(n) space
+  // ═══════════════════════════════════════════════════════════════════════════
+  // NOTE: A more optimal approach would use HashSet with add() returning false
+  // for duplicates, but this shows the frequency counting pattern.
   public boolean containsDuplicate(int[] nums) {
-    // KEY: Use HashMap to track how many times each number appears
+    // ─────────────────────────────────────────────────────────────────────
+    // PASS 1: Build frequency map
+    // ─────────────────────────────────────────────────────────────────────
     Map<Integer, Integer> frequency = new HashMap<>();
     for (int num : nums) {
-      // REMEMBER: getOrDefault avoids null checks - returns 0 if key doesn't exist
       Integer currentFrequency = frequency.getOrDefault(num, 0) + 1;
       frequency.put(num, currentFrequency);
     }
+
+    // ─────────────────────────────────────────────────────────────────────
+    // PASS 2: Check for any frequency > 1
+    // ─────────────────────────────────────────────────────────────────────
     for (Map.Entry<Integer, Integer> entry : frequency.entrySet()) {
-      // KEY: Duplicate means frequency > 1, not >= 1
       if (entry.getValue() > 1) {
         return true;
       }

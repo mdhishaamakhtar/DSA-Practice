@@ -18,19 +18,37 @@ package dev.hishaam.dsa.twoPointers;
  * constant extra space
  */
 public class ContainerWithMostWater {
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // Two Pointers (Greedy) - O(n) time, O(1) space
+  // ═══════════════════════════════════════════════════════════════════════════
+  //
+  // KEY INSIGHT: Move the pointer at the shorter line. The shorter line limits
+  // the height, keeping it while reducing width can only decrease area.
+  //
+  // EXAMPLE WALKTHROUGH with [1,8,6,2,5,4,8,3,7]:
+  // i=0,j=8: h=min(1,7)=1, area=8*1=8, move i (shorter)
+  // i=1,j=8: h=min(8,7)=7, area=7*7=49, move j (shorter)
+  // i=1,j=7: h=min(8,3)=3, area=6*3=18, move j
+  // ... continues, but 49 remains max
+  // Final: 49
   public int maxArea(int[] height) {
-    // KEY: Two pointers starting at maximum width
     int i = 0, j = height.length - 1;
     int ans = 0;
+
     while (i < j) {
-      // KEY: Container height is limited by the shorter line
+      // ─────────────────────────────────────────────────────────────────────
+      // CALCULATE: Container height limited by shorter line
+      // ─────────────────────────────────────────────────────────────────────
       int containerHeight = Math.min(height[i], height[j]);
       int area = (j - i) * containerHeight;
       ans = Math.max(ans, area);
-      // KEY: Move the pointer at the shorter line inward.
-      // The shorter line limits the height, so keeping it while
-      // reducing width can only decrease area. Moving the taller
-      // one would guarantee a smaller or equal area.
+
+      // ─────────────────────────────────────────────────────────────────────
+      // GREEDY MOVE: Move the shorter side inward
+      // WHY? Shorter line is the bottleneck. Moving taller one guarantees
+      // smaller or equal area (width decreases, height can't increase).
+      // ─────────────────────────────────────────────────────────────────────
       if (height[i] > height[j]) {
         j--;
       } else {

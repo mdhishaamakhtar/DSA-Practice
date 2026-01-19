@@ -21,28 +21,45 @@ import java.util.List;
  * outer loop) Space Complexity: O(1) - excluding the output array, only constant extra space used
  */
 public class ThreeSum {
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // Sorting + Two Pointers - O(n²) time, O(1) space (excluding output)
+  // ═══════════════════════════════════════════════════════════════════════════
+  //
+  // EXAMPLE WALKTHROUGH with [-1,0,1,2,-1,-4]:
+  // After sort: [-4,-1,-1,0,1,2]
+  // k=0 (val=-4): i=1,j=5, need sum=4, max possible=-1+2=1 < 4, no triplet
+  // k=1 (val=-1): i=2,j=5, need sum=1
+  // sum=-1+2=1 ✓ → [-1,-1,2], skip duplicates
+  // i=3,j=4: sum=0+1=1 ✓ → [-1,0,1]
+  // k=2 (val=-1): SKIP (duplicate of k=1)
+  // Final: [[-1,-1,2], [-1,0,1]]
   public List<List<Integer>> threeSum(int[] nums) {
     List<List<Integer>> ans = new ArrayList<>();
-    // IMPORTANT: Sorting enables two-pointer approach and makes duplicate detection
-    // trivial
-    Arrays.sort(nums);
-    for (int k = 0; k < nums.length - 2; k++) {
 
-      // KEY: Skip duplicate values for k to avoid duplicate triplets in result
+    // ─────────────────────────────────────────────────────────────────────
+    // SORT: Enables two-pointer and makes duplicate detection trivial
+    // ─────────────────────────────────────────────────────────────────────
+    Arrays.sort(nums);
+
+    for (int k = 0; k < nums.length - 2; k++) {
+      // ─────────────────────────────────────────────────────────────────────
+      // SKIP DUPLICATES (k level): Avoid duplicate triplets with same first element
+      // ─────────────────────────────────────────────────────────────────────
       if (k > 0 && nums[k] == nums[k - 1]) {
         continue;
       }
 
-      // Two pointers: i starts just after k, j starts at end
       int i = k + 1, j = nums.length - 1;
       while (i < j) {
         int currentSum = nums[i] + nums[j] + nums[k];
         if (currentSum == 0) {
-          List<Integer> triplet = new ArrayList<>(List.of(nums[i], nums[j], nums[k]));
-          ans.add(triplet);
+          ans.add(new ArrayList<>(List.of(nums[i], nums[j], nums[k])));
           i++;
           j--;
-          // IMPORTANT: Skip duplicates for i and j after finding a valid triplet
+          // ─────────────────────────────────────────────────────────────────────
+          // SKIP DUPLICATES (i,j level): After finding match, skip same values
+          // ─────────────────────────────────────────────────────────────────────
           while (i < j && nums[i] == nums[i - 1]) {
             i++;
           }
@@ -50,12 +67,9 @@ public class ThreeSum {
             j--;
           }
         } else if (currentSum > 0) {
-          // TRICK: Sum too large, decrease it by moving right pointer left (smaller
-          // value)
-          j--;
+          j--; // Sum too large, need smaller
         } else {
-          // TRICK: Sum too small, increase it by moving left pointer right (larger value)
-          i++;
+          i++; // Sum too small, need larger
         }
       }
     }

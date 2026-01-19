@@ -23,25 +23,36 @@ import java.util.Map;
  * O(n * k) for storing all strings in groups
  */
 class GroupAnagrams {
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // Character Frequency Map as Key - O(n * k) time, O(n * k) space
+  // ═══════════════════════════════════════════════════════════════════════════
+  //
+  // EXAMPLE: ["eat","tea","tan","ate","nat","bat"]
+  // "eat" → {e:1,a:1,t:1} → bucket1
+  // "tea" → {t:1,e:1,a:1} → same bucket1 (maps are equal!)
+  // "tan" → {t:1,a:1,n:1} → bucket2
+  // Result: [[eat,tea,ate], [tan,nat], [bat]]
   public List<List<String>> groupAnagrams(String[] strs) {
-    // TRICK: Use Map<Character, Integer> as key! Java HashMaps use .equals() for
-    // key
-    // comparison, so two maps with same content will hash to same bucket
+    // ─────────────────────────────────────────────────────────────────────
+    // TRICK: Use Map<Character,Integer> as key! Java uses .equals() for comparison
+    // ─────────────────────────────────────────────────────────────────────
     Map<Map<Character, Integer>, List<String>> bigMap = new HashMap<>();
+
     for (String str : strs) {
-      // KEY: Build frequency map for current string - this becomes the grouping key
+      // Build frequency map for current string
       Map<Character, Integer> freqMap = new HashMap<>();
       for (int j = 0; j < str.length(); j++) {
         Character currentLetter = str.charAt(j);
         Integer currentFrequency = freqMap.getOrDefault(currentLetter, 0);
         freqMap.put(currentLetter, currentFrequency + 1);
       }
-      // REMEMBER: getOrDefault with new ArrayList, then put back (or use
-      // computeIfAbsent)
+      // Add to bucket (create new bucket if needed)
       List<String> currentBucket = bigMap.getOrDefault(freqMap, new ArrayList<>());
       currentBucket.add(str);
       bigMap.put(freqMap, currentBucket);
     }
+
     // Convert map values to list of lists
     List<List<String>> ans = new ArrayList<>();
     for (Map.Entry<Map<Character, Integer>, List<String>> entry : bigMap.entrySet()) {

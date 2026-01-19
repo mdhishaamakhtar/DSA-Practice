@@ -17,11 +17,16 @@ package dev.hishaam.dsa.twoPointers;
  */
 public class ValidPalindrome {
 
+  // ═══════════════════════════════════════════════════════════════════════════
+  // Preprocessing + Two Pointers - O(n) time, O(n) space
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // STEP 1: Filter to alphanumeric only, convert to lowercase
+  // ─────────────────────────────────────────────────────────────────────────
   public String processString(String input) {
     StringBuilder processed = new StringBuilder();
     for (int i = 0; i < input.length(); i++) {
-      // KEY: Only keep alphanumeric chars, convert to lowercase for case-insensitive
-      // comparison
       if (Character.isLetterOrDigit(input.charAt(i))) {
         processed.append(Character.toLowerCase(input.charAt(i)));
       }
@@ -29,9 +34,11 @@ public class ValidPalindrome {
     return processed.toString();
   }
 
+  // ─────────────────────────────────────────────────────────────────────────
+  // STEP 2: Two pointers from opposite ends, converge toward middle
+  // ─────────────────────────────────────────────────────────────────────────
   public boolean isPalindrome(String s) {
     String processed = processString(s);
-    // KEY: Two pointers from opposite ends, converge toward middle
     int i = 0, j = processed.length() - 1;
     while (i <= j) {
       if (processed.charAt(i) != processed.charAt(j)) {

@@ -21,16 +21,25 @@ import java.util.Map;
  * up to n elements
  */
 public class TwoSum {
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // HashMap for O(1) Complement Lookup - O(n) time, O(n) space
+  // ═══════════════════════════════════════════════════════════════════════════
   public int[] twoSum(int[] nums, int target) {
-    // KEY: Map stores value -> index for O(1) complement lookup
+    // ─────────────────────────────────────────────────────────────────────
+    // PASS 1: Build value → index map
+    // ─────────────────────────────────────────────────────────────────────
     Map<Integer, Integer> indexMap = new HashMap<>();
     for (int i = 0; i < nums.length; i++) {
       indexMap.put(nums[i], i);
     }
+
+    // ─────────────────────────────────────────────────────────────────────
+    // PASS 2: Find complement for each element
+    // ─────────────────────────────────────────────────────────────────────
     int[] ans = new int[2];
     for (int i = 0; i < nums.length; i++) {
-      // IMPORTANT: Check complement exists AND ensure it's not the same element (i !=
-      // index)
+      // IMPORTANT: Check complement exists AND ensure it's not the same element
       if (indexMap.containsKey(target - nums[i]) && i != indexMap.get(target - nums[i])) {
         ans[0] = i;
         ans[1] = indexMap.get(target - nums[i]);

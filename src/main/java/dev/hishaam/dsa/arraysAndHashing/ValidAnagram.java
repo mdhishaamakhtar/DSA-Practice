@@ -21,26 +21,37 @@ import java.util.Map;
  * set size (at most 26 for lowercase)
  */
 class ValidAnagram {
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // Character Frequency Map Comparison - O(n) time, O(k) space
+  // ═══════════════════════════════════════════════════════════════════════════
   public boolean isAnagram(String s, String t) {
-    // KEY: Early exit - anagrams must have same length
+    // Early exit - anagrams must have same length
     if (s.length() != t.length()) {
       return false;
     }
-    // Build frequency map for string s
+
+    // ─────────────────────────────────────────────────────────────────────
+    // Build frequency maps for both strings
+    // ─────────────────────────────────────────────────────────────────────
     Map<Character, Integer> smap = new HashMap<>();
     Map<Character, Integer> tmap = new HashMap<>();
+
     for (int i = 0; i < s.length(); i++) {
       Character currentLetter = s.charAt(i);
       Integer currentFrequency = smap.getOrDefault(currentLetter, 0);
       smap.put(currentLetter, currentFrequency + 1);
     }
-    // Build frequency map for string t
+
     for (int i = 0; i < t.length(); i++) {
       Character currentLetter = t.charAt(i);
       Integer currentFrequency = tmap.getOrDefault(currentLetter, 0);
       tmap.put(currentLetter, currentFrequency + 1);
     }
-    // TRICK: Map.equals() compares both keys and values - perfect for anagram check
+
+    // ─────────────────────────────────────────────────────────────────────
+    // TRICK: Map.equals() compares both keys and values
+    // ─────────────────────────────────────────────────────────────────────
     return smap.equals(tmap);
   }
 }

@@ -25,30 +25,53 @@ package dev.hishaam.dsa.slidingWindow;
  */
 public class BuySellStock {
 
-  // APPROACH 1: Running Minimum (feels like intuition, but it's actually DP!)
-  // KEY INSIGHT: For any sell day j, the optimal buy day is simply the minimum
-  // price from day 0 to j-1
+  // ═══════════════════════════════════════════════════════════════════════════
+  // APPROACH 1: Running Minimum (DP-like) - O(n)
+  // ═══════════════════════════════════════════════════════════════════════════
+  //
+  // KEY INSIGHT: For any sell day j, the optimal buy day is the minimum price
+  // from day 0 to j-1. Track this running minimum as we iterate.
+  //
+  // EXAMPLE WALKTHROUGH with [7,1,5,3,6,4]:
+  // j=1: price=1, profit=1-7=-6→0, minCost=min(7,1)=1
+  // j=2: price=5, profit=5-1=4, minCost=1
+  // j=3: price=3, profit=3-1=2, maxProfit stays 4, minCost=1
+  // j=4: price=6, profit=6-1=5, maxProfit=5, minCost=1
+  // j=5: price=4, profit=4-1=3, maxProfit stays 5
+  // Final: 5
   public int maxProfitDP(int[] prices) {
-    // Track the minimum price seen so far - this is our optimal buy point
     int minCost = prices[0];
     int maxProfit = 0;
 
     // NOTE: Start from index 1 since we need at least one day before to buy
     for (int j = 1; j < prices.length; j++) {
-      // TRICK: Calculate profit if we sell today using the best buy price so far
-      // This implicitly considers ALL valid (buy, sell) pairs ending at j
+      // ─────────────────────────────────────────────────────────────────────
+      // CALCULATE PHASE: What if we sell today?
+      // ─────────────────────────────────────────────────────────────────────
       maxProfit = Math.max(maxProfit, prices[j] - minCost);
 
-      // Update minimum for future sell days
-      // ORDER MATTERS: Calculate profit BEFORE updating minCost
-      // (can't buy and sell on same day)
+      // ─────────────────────────────────────────────────────────────────────
+      // UPDATE PHASE: Update minCost for future sell days
+      // ORDER MATTERS: Calculate profit BEFORE updating (can't buy & sell same day)
+      // ─────────────────────────────────────────────────────────────────────
       minCost = Math.min(minCost, prices[j]);
     }
     return maxProfit;
   }
 
-  // APPROACH 2: Sliding Window / Two Pointers
+  // ═══════════════════════════════════════════════════════════════════════════
+  // APPROACH 2: Sliding Window / Two Pointers - O(n)
+  // ═══════════════════════════════════════════════════════════════════════════
+  //
   // L = buy day, R = sell day candidate
+  //
+  // EXAMPLE WALKTHROUGH with [7,1,5,3,6,4]:
+  // R=1: prices[1]=1 < prices[0]=7, L jumps to 1
+  // R=2: prices[2]=5 > prices[1]=1, profit=4
+  // R=3: prices[3]=3 > prices[1]=1, profit=2, maxProfit=4
+  // R=4: prices[4]=6 > prices[1]=1, profit=5, maxProfit=5
+  // R=5: prices[5]=4 > prices[1]=1, profit=3, maxProfit=5
+  // Final: 5
   public int maxProfitSlidingWindow(int[] prices) {
     int L = 0, R = 1, maxProfit = 0;
 
@@ -57,12 +80,12 @@ public class BuySellStock {
         // Valid transaction: buy low, sell high
         maxProfit = Math.max(maxProfit, (prices[R] - prices[L]));
       } else {
-        // KEY: Found a lower buy price at R, so move L to R
+        // ─────────────────────────────────────────────────────────────────────
+        // JUMP: Found a lower buy price at R, so move L to R
         // WHY? Any future sell day would be better paired with R than L
-        // since prices[R] <= prices[L]
+        // ─────────────────────────────────────────────────────────────────────
         L = R;
       }
-      // Always expand the sell window
       R++;
     }
     return maxProfit;

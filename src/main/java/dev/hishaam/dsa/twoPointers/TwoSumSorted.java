@@ -17,22 +17,29 @@ package dev.hishaam.dsa.twoPointers;
  * two pointers
  */
 public class TwoSumSorted {
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // Two Pointers on Sorted Array - O(n) time, O(1) space
+  // ═══════════════════════════════════════════════════════════════════════════
+  //
+  // EXAMPLE WALKTHROUGH with [2,7,11,15], target=9:
+  // i=0,j=3: 2+15=17 > 9 → j--
+  // i=0,j=2: 2+11=13 > 9 → j--
+  // i=0,j=1: 2+7=9 ✓ → return [1,2] (1-indexed)
   public int[] twoSum(int[] numbers, int target) {
-    // KEY: Start pointers at opposite ends to leverage sorted property
     int i = 0, j = numbers.length - 1;
     int[] ans = new int[2];
+
     while (i < j) {
       if (numbers[i] + numbers[j] == target) {
-        // IMPORTANT: Problem requires 1-indexed output, so add 1 to both indices
+        // IMPORTANT: Problem requires 1-indexed output
         ans[0] = i + 1;
         ans[1] = j + 1;
         break;
       } else if (numbers[i] + numbers[j] < target) {
-        // TRICK: Sum too small -> move left pointer right to increase sum
-        i++;
+        i++; // Sum too small → need larger value
       } else {
-        // TRICK: Sum too large -> move right pointer left to decrease sum
-        j--;
+        j--; // Sum too large → need smaller value
       }
     }
     return ans;

@@ -29,52 +29,58 @@ package dev.hishaam.dsa.twoPointers;
  * constant extra space
  */
 public class TrappingRainWater {
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // Two Pointers with Running Max - O(n) time, O(1) space
+  // ═══════════════════════════════════════════════════════════════════════════
+  //
+  // KEY INSIGHT: Water at position i = min(maxLeft, maxRight) - height[i]
+  // We process the SHORTER side because it's the limiting factor.
+  //
+  // EXAMPLE WALKTHROUGH with [0,1,0,2,1,0,1,3,2,1,2,1]:
+  // Pre-process: L skips 0,1 → L=3 (height=2), R stays 11 (height=1)
+  // leftMax=2, rightMax=1
+  // Since height[R]=1 < height[L]=2, process right side:
+  // R=10: height=2 > rightMax=1, update rightMax=2
+  // R=9: height=1 < rightMax=2, water += 2-1=1
+  // R=8: height=2 >= rightMax=2, update rightMax=2
+  // ... continues until L meets R
+  // Final: 6 units of water
   public int trap(int[] height) {
     int length = height.length;
     int ans = 0;
     int L = 0, R = length - 1;
 
-    // OPTIMIZATION: Skip ascending edges on the left where water cannot be trapped
-    // Water needs a "container" - ascending edges on the boundary can't hold water
-    // Example: [0,1,2,3,...] - no water can be trapped on these rising edges
-    // Stop when we find a local peak (height[L] >= height[L+1] and height[L] > 0)
+    // ─────────────────────────────────────────────────────────────────────
+    // PRE-PROCESSING: Skip ascending edges where water cannot be trapped
+    // ─────────────────────────────────────────────────────────────────────
+    // Left side: skip zeros and rising edges [0,1,2,3,...] → no container
     while (L < length - 1 && ((height[L] == 0) || (height[L] < height[L + 1]))) {
       L++;
     }
-
-    // OPTIMIZATION: Skip ascending edges on the right (same logic, mirrored)
-    // Example: [...,1,2,3] - no water can be trapped on these rising edges from
-    // right
+    // Right side: mirror logic [...,1,2,3] → no container
     while (R > 1 && ((height[R] == 0) || (height[R] < height[R - 1]))) {
       R--;
     }
 
-    // Initialize max heights with the starting positions after optimization
-    // These represent the tallest bars seen so far from each direction
     int leftMax = height[L], rightMax = height[R];
 
+    // ─────────────────────────────────────────────────────────────────────
+    // MAIN LOOP: Process the shorter side (limiting factor)
+    // ─────────────────────────────────────────────────────────────────────
     while (L < R) {
-      // KEY DECISION: Process the side with the SHORTER current height
-      // WHY? The shorter side is the "bottleneck" for water capacity
       if (height[L] < height[R]) {
-        // IMPORTANT: Move pointer FIRST, then calculate water
-        // This ensures we don't count the boundary bar itself as holding water
+        // Left is shorter → leftMax is the bottleneck
+        // PROCESS-AFTER-MOVE: Move first, then calculate
         L++;
-
-        // TRICK: Water calculation - only add water if current bar is below the max
         if (height[L] < leftMax) {
-          // Water trapped = leftMax - current height
-          // We use leftMax (not min of both) because we KNOW height[L] < height[R]
-          // guarantees leftMax is the limiting factor here
           ans = ans + (leftMax - height[L]);
         } else {
-          // Current bar is taller - update the max (this bar becomes new boundary)
           leftMax = height[L];
         }
       } else {
-        // Mirror logic for the right side when right is the limiting factor
+        // Right is shorter → rightMax is the bottleneck
         R--;
-
         if (height[R] < rightMax) {
           ans = ans + (rightMax - height[R]);
         } else {
