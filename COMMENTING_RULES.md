@@ -147,7 +147,7 @@ For non-obvious algorithms, include a brief step-by-step walkthrough:
 Based on common mistakes, always comment these patterns:
 
 | Pattern | What to Comment |
-|---------|--------------------:|
+| --------- | --------------------: |
 | **HashMap.getOrDefault** | Why default value is chosen |
 | **Sorting with custom comparator** | The sorting order and why |
 | **Index calculations in 2D** | The formula breakdown (e.g., `(i/3)*3 + (j/3)`) |
