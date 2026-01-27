@@ -171,6 +171,7 @@ Based on common mistakes, always comment these patterns:
 | **Sliding window shrink vs reset** | Why shrink-from-left is O(n) but full reset is O(n²) - each element enters/exits at most once |
 | **Amortized O(n) in sliding window** | Why "while loop inside for loop" is still O(n) - each element added/removed at most once total |
 | **Final boundary check after loop** | When loop may exit with valid window state that needs one more max/min comparison |
+| **Replacements Constraint Logic** | The formula `(windowSize - maxFrequency) <= k` for "at most k changes" problems |
 
 ---
 
